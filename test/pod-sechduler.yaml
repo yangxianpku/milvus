@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+  milvus-test:
+    image: milvus:v2.3.0
+    hostname: milvus-test
+    command: >
+      bash -c "sleep 24h"
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.index3==true
+    networks:
+        - milvus-cluster-net
+
+networks:
+  milvus-cluster-net:
+    driver: overlay

@@ -1,0 +1,102 @@
+version: '3.7'
+
+services:
+  zk1:
+    image: pulsar:v2.8.2
+    hostname: zk1
+    environment:
+      - PULSAR_MEM=-Xms2g -Xmx2g -XX:MaxDirectMemorySize=2g
+      - PULSAR_LOG_DIR=/pulsar/data/logs
+    volumes:
+      - ./zookeeper.conf:/pulsar/conf/zookeeper.conf
+      - /mnt/data/zookeeper/data:/pulsar/data/zookeeper
+      - /mnt/data/zookeeper/logs:/pulsar/data/logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.zk1==true
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/zookeeper.conf && \
+        exec bin/pulsar zookeeper"
+    healthcheck:
+      test: ["CMD", "bin/pulsar-zookeeper-ruok.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  zk2:
+    image: pulsar:v2.8.2
+    hostname: zk2
+    environment:
+      - PULSAR_MEM=-Xms2g -Xmx2g -XX:MaxDirectMemorySize=2g
+      - PULSAR_LOG_DIR=/pulsar/data/logs
+    volumes:
+      - ./zookeeper.conf:/pulsar/conf/zookeeper.conf
+      - /mnt/data/zookeeper/data:/pulsar/data/zookeeper
+      - /mnt/data/zookeeper/logs:/pulsar/data/logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.zk2==true
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/zookeeper.conf && \
+        exec bin/pulsar zookeeper"
+    healthcheck:
+      test: ["CMD", "bin/pulsar-zookeeper-ruok.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  zk3:
+    image: pulsar:v2.8.2
+    hostname: zk3
+    environment:
+      - PULSAR_MEM=-Xms2g -Xmx2g -XX:MaxDirectMemorySize=2g
+      - PULSAR_LOG_DIR=/pulsar/data/logs
+    volumes:
+      - ./zookeeper.conf:/pulsar/conf/zookeeper.conf
+      - /mnt/data/zookeeper/data:/pulsar/data/zookeeper
+      - /mnt/data/zookeeper/logs:/pulsar/data/logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.zk3==true
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/zookeeper.conf && \
+        exec bin/pulsar zookeeper"
+    healthcheck:
+      test: ["CMD", "bin/pulsar-zookeeper-ruok.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+networks:
+  milvus-cluster-net:
+    driver: overlay
+
+# command: >
+#   bash -c "bin/apply-config-from-env.py conf/zookeeper.conf && \
+#     bin/generate-zookeeper-config.sh conf/zookeeper.conf &&    \
+#     exec bin/pulsar zookeeper"
+

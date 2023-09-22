@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  nginx1:
+    image: nginx:latest
+    hostname: nginx1
+    deploy:
+      placement:
+        constraints: 
+          - node.role==manager
+    networks:
+        - milvus-cluster-net
+
+networks:
+  milvus-cluster-net:
+    driver: overlay

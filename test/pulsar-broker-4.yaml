@@ -1,0 +1,69 @@
+version: '3.7'
+
+services:
+  broker1:
+    image: pulsar:v2.8.2
+    hostname: broker1
+    environment:
+      - PULSAR_MEM=-Xms8g -Xmx8g -XX:MaxDirectMemorySize=16g
+      - PULSAR_LOG_DIR=/pulsar/data/logs
+    volumes:
+      # - /mnt/data/broker/data:/pulsar/data/broker
+      - ./broker.conf:/pulsar/conf/broker.conf
+      - /mnt/data/broker/logs:/pulsar/data/logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.broker1==true
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/broker.conf && \
+        exec sleep 24h"
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8080/metrics"]
+    #   interval: 20s
+    #   timeout: 5s
+    #   retries: 5
+
+  broker2:
+    image: pulsar:v2.8.2
+    hostname: broker2
+    environment:
+      - PULSAR_MEM=-Xms8g -Xmx8g -XX:MaxDirectMemorySize=16g
+      - PULSAR_LOG_DIR=/pulsar/data/logs
+    volumes:
+      # - /mnt/data/broker/data:/pulsar/data/broker
+      - ./broker.conf:/pulsar/conf/broker.conf
+      - /mnt/data/broker/logs:/pulsar/data/logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.broker2==true
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/broker.conf && \
+        exec sleep 24h"
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8080/metrics"]
+    #   interval: 20s
+    #   timeout: 5s
+    #   retries: 5
+
+      # bash -c "bin/apply-config-from-env.py conf/broker.conf && \
+      #   exec bin/pulsar broker"
+
+networks:
+  milvus-cluster-net:
+    driver: overlay

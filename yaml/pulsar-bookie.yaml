@@ -1,0 +1,131 @@
+version: '3.7'
+
+services:  
+  bookie1:
+    image: pulsar:v3.1.0
+    user: root
+    hostname: bookie1
+    environment:
+      - clusterName=pulsar-cluster
+      - zkServers=zk1:2181,zk2:2181,zk3:2181
+      - metadataServiceUri=metadata-store:zk:zk1:2181,zk2:2181,zk3:2181
+      - useHostNameAsBookieID=true
+      - enableStatistics=true
+      - httpServerEnabled=true
+      - advertisedAddress=bookie1
+      - BOOKIE_MEM=-Xms8g -Xmx8g -XX:MaxDirectMemorySize=16g
+      - BOOKIE_LOG_DIR=/pulsar/data/bookkeeper/logs
+    volumes:
+      # - ./bookkeeper.conf:/pulsar/conf/bookkeeper.conf
+      - /mnt/data/bookkeeper:/pulsar/data/bookkeeper
+      # - /mnt/data/bookkeeper/journal:/pulsar/data/bookkeeper/journal
+      # - /mnt/data/bookkeeper/ledgers:/pulsar/data/bookkeeper/ledgers
+      # - /mnt/data/bookkeeper/logs:/pulsar/data/bookkeeper/logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        delay: 10s
+        max_attempts: 10
+        window: 60s
+      placement:
+        constraints:
+          - node.labels.bookie1==true
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && \ 
+        exec bin/pulsar bookie"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  bookie2:
+    image: pulsar:v3.1.0
+    user: root
+    hostname: bookie2
+    environment:
+      - clusterName=pulsar-cluster
+      - zkServers=zk1:2181,zk2:2181,zk3:2181
+      - metadataServiceUri=metadata-store:zk:zk1:2181,zk2:2181,zk3:218
+      - useHostNameAsBookieID=true
+      - enableStatistics=true
+      - httpServerEnabled=true
+      - advertisedAddress=bookie2
+      - BOOKIE_MEM=-Xms8g -Xmx8g -XX:MaxDirectMemorySize=16g
+      - BOOKIE_LOG_DIR=/pulsar/data/bookkeeper/logs
+    volumes:
+      # - ./bookkeeper.conf:/pulsar/conf/bookkeeper.conf
+      - /mnt/data/bookkeeper:/pulsar/data/bookkeeper
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        delay: 10s
+        max_attempts: 10
+        window: 60s
+      placement:
+        constraints:
+          - node.labels.bookie2==true
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && \ 
+        exec bin/pulsar bookie"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  bookie3:
+    image: pulsar:v3.1.0
+    user: root
+    hostname: bookie3
+    environment:
+      - clusterName=pulsar-cluster
+      - zkServers=zk1:2181,zk2:2181,zk3:2181
+      - metadataServiceUri=metadata-store:zk:zk1:2181,zk2:2181,zk3:218
+      - useHostNameAsBookieID=true
+      - enableStatistics=true
+      - httpServerEnabled=true
+      - advertisedAddress=bookie3
+      - BOOKIE_MEM=-Xms8g -Xmx8g -XX:MaxDirectMemorySize=16g
+      - BOOKIE_LOG_DIR=/pulsar/data/bookkeeper/logs
+    volumes:
+      # - ./bookkeeper.conf:/pulsar/conf/bookkeeper.conf
+      - /mnt/data/bookkeeper:/pulsar/data/bookkeeper
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        delay: 10s
+        max_attempts: 10
+        window: 60s
+      placement:
+        constraints:
+          - node.labels.bookie3==true
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && \ 
+        exec bin/pulsar bookie"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/metrics"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+networks:
+  milvus-cluster-net:
+    driver: overlay
+
+
+# docker run --rm -itd -v/mnt/data:/mnt/data 9abe35611656 bash
+      # bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && \ 
+      #   exec bin/pulsar bookie"
+# BookKeeper metadata doesn't exist in zookeeper
+
+# ls /ledgers/cookies
+# delete /ledgers/cookies/10.0.61.22:3181
+# delete /ledgers/cookies/10.0.61.25:3181
+# delete /ledgers/cookies/10.0.61.27:3181
+
+# bash -c "bin/bookkeeper shell metaformat -nonInteractive && \
+#   exec bin/pulsar bookie"

@@ -1,0 +1,292 @@
+version: '3.7'
+
+services:
+  index1:      # yaml line 1439
+    image: milvus:v2.3.0
+    hostname: index1
+    volumes:
+      - ./milvus.yaml:/milvus/configs/milvus.yaml
+      - /mnt/data/milvus/index-node/data:/var/lib/milvus/data/
+      - /mnt/data/milvus/system-logs:/milvus/system-logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.index1==true
+    command: >
+      bash -c "sleep 5 && milvus run indexnode"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  index2:      # yaml line 1439
+    image: milvus:v2.3.0
+    hostname: index2
+    volumes:
+      - ./milvus.yaml:/milvus/configs/milvus.yaml
+      - /mnt/data/milvus/index-node/data:/var/lib/milvus/data/
+      - /mnt/data/milvus/system-logs:/milvus/system-logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.index2==true
+    command: >
+      bash -c "sleep 5 && milvus run indexnode"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  index3:      # yaml line 1439
+    image: milvus:v2.3.0
+    hostname: index3
+    volumes:
+      - ./milvus.yaml:/milvus/configs/milvus.yaml
+      - /mnt/data/milvus/index-node/data:/var/lib/milvus/data/
+      - /mnt/data/milvus/system-logs:/milvus/system-logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.index3==true
+    command: >
+      bash -c "sleep 5 && milvus run indexnode"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  index4:      # yaml line 1439
+    image: milvus:v2.3.0
+    hostname: index4
+    volumes:
+      - ./milvus.yaml:/milvus/configs/milvus.yaml
+      - /mnt/data/milvus/index-node/data:/var/lib/milvus/data/
+      - /mnt/data/milvus/system-logs:/milvus/system-logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.index4==true
+    command: >
+      bash -c "sleep 5 && milvus run indexnode"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  data1:       # yaml line 1240
+    image: milvus:v2.3.0
+    hostname: data1
+    volumes:
+      - ./milvus.yaml:/milvus/configs/milvus.yaml
+      - /mnt/data/milvus/data-node/data:/var/lib/milvus/data/
+      - /mnt/data/milvus/system-logs:/milvus/system-logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.coord==true
+    command: >
+      bash -c "sleep 5 && milvus run datanode"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  data2:       # yaml line 1240
+    image: milvus:v2.3.0
+    hostname: data2
+    volumes:
+      - ./milvus.yaml:/milvus/configs/milvus.yaml
+      - /mnt/data/milvus/data-node/data:/var/lib/milvus/data/
+      - /mnt/data/milvus/system-logs:/milvus/system-logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.coord==true
+    command: >
+      bash -c "sleep 5 && milvus run datanode"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  query1:      # yaml line 1740
+    image: milvus:v2.3.0
+    hostname: query1
+    volumes:
+      - ./milvus.yaml:/milvus/configs/milvus.yaml
+      - /mnt/data/milvus/query-node/data:/var/lib/milvus/data/
+      - /mnt/data/milvus/system-logs:/milvus/system-logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.query1==true
+    command: >
+      bash -c "sleep 5 && milvus run querynode"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  query2:      # yaml line 1740
+    image: milvus:v2.3.0
+    hostname: query2
+    volumes:
+      - ./milvus.yaml:/milvus/configs/milvus.yaml
+      - /mnt/data/milvus/query-node/data:/var/lib/milvus/data/
+      - /mnt/data/milvus/system-logs:/milvus/system-logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.query2==true
+    command: >
+      bash -c "sleep 5 && milvus run querynode"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  query3:      # yaml line 1740
+    image: milvus:v2.3.0
+    hostname: query3
+    volumes:
+      - ./milvus.yaml:/milvus/configs/milvus.yaml
+      - /mnt/data/milvus/query-node/data:/var/lib/milvus/data/
+      - /mnt/data/milvus/system-logs:/milvus/system-logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.query3==true
+    command: >
+      bash -c "sleep 5 && milvus run querynode"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  query4:      # yaml line 1740
+    image: milvus:v2.3.0
+    hostname: query4
+    volumes:
+      - ./milvus.yaml:/milvus/configs/milvus.yaml
+      - /mnt/data/milvus/query-node/data:/var/lib/milvus/data/
+      - /mnt/data/milvus/system-logs:/milvus/system-logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.query4==true
+    command: >
+      bash -c "sleep 5 && milvus run querynode"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  query5:      # yaml line 1740
+    image: milvus:v2.3.0
+    hostname: query5
+    volumes:
+      - ./milvus.yaml:/milvus/configs/milvus.yaml
+      - /mnt/data/milvus/query-node/data:/var/lib/milvus/data/
+      - /mnt/data/milvus/system-logs:/milvus/system-logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      placement:
+        constraints:
+          - node.labels.query5==true
+    command: >
+      bash -c "sleep 5 && milvus run querynode"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+networks:
+  milvus-cluster-net:
+    driver: overlay

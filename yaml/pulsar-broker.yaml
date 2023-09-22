@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  broker:
+    image: pulsar:v3.1.0
+    user: root
+    hostname: broker
+    environment:
+      - metadataStoreUrl=zk:zk1:2181,zk2:2181,zk3:2181
+      - zookeeperServers=zk1:2181,zk2:2181,zk3:2181
+      - configurationStoreServers=zk1:2181,zk2:2181,zk3:2181
+      - clusterName=pulsar-cluster
+      - managedLedgerDefaultEnsembleSize=2
+      - managedLedgerDefaultWriteQuorum=2
+      - managedLedgerDefaultAckQuorum=2
+      - advertisedAddress=broker
+      - advertisedListeners=external:pulsar://broker:6650
+      - PULSAR_MEM=-Xms8g -Xmx8g -XX:MaxDirectMemorySize=16g
+      - PULSAR_LOG_DIR=/pulsar/data/logs
+    volumes:
+      - /mnt/data/broker/logs:/pulsar/data/logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      # replicas: 2
+      mode: global
+      placement:
+        constraints:
+          - node.labels.broker==true
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/broker.conf && \
+        exec bin/pulsar broker"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/metrics"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+networks:
+  milvus-cluster-net:
+    driver: overlay

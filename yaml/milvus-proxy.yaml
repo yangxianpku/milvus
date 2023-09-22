@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  milvus-proxy: # yaml line 1540
+    image: milvus:v2.3.0
+    hostname: milvus-proxy
+    ports:
+      - target: 19530
+        published: 19530
+        mode: host
+      - target: 9091
+        published: 9091
+        mode: host
+    volumes:
+      - ./milvus.yaml:/milvus/configs/milvus.yaml
+      - /mnt/data/milvus/proxy-node/access-logs:/milvus/access-logs
+      - /mnt/data/milvus/system-logs:/milvus/system-logs
+    networks:
+      - milvus-cluster-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 10
+        window: 120s
+      # mode: global
+      replicas: 2
+      placement:
+        constraints:
+          - node.role==manager
+    command: >
+      bash -c "sleep 5 && milvus run proxy"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+networks:
+  milvus-cluster-net:
+    driver: overlay
